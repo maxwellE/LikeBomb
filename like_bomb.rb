@@ -69,7 +69,7 @@ class LikeBomb
      complete_urls.each do |url|
        hydra.queue Typhoeus::Request.new(url,
                                        :method => :post,
-                                       :timeout => 5000,
+                                       :timeout => 50000,
                                        :cache_timeout => 60)
      end
      hydra.run
@@ -81,7 +81,7 @@ class LikeBomb
      complete_urls.each do |url|
        hydra.queue Typhoeus::Request.new(url,
                                        :method => :post,
-                                       :timeout => 5000,
+                                       :timeout => 50000,
                                        :cache_timeout => 60)
      end
      hydra.run
@@ -93,7 +93,7 @@ class LikeBomb
      complete_urls.each do |url|
        hydra.queue Typhoeus::Request.new(url,
                                        :method => :post,
-                                       :timeout => 5000,
+                                       :timeout => 50000,
                                        :cache_timeout => 60)
      end
      hydra.run
@@ -101,12 +101,12 @@ class LikeBomb
 end
 
 def main
-  lb = LikeBomb.new("KEYHERE")
-  lb.get_friends.each do |friend|
+  lb = LikeBomb.new(IO.readlines("key.txt").first)
+  lb.get_friends.select{|f| f["name"] == "Brian David Haugh"}.each do |friend|
     puts "Bombing #{friend["name"]}: #{Time.now}"
-    all_ids = lb.get_statuses(friend["id"])
-    all_ids.concat lb.get_photos(friend["id"])
-      lb.post_likes_and_cools(all_ids)
+    #all_ids = lb.get_statuses(friend["id"])
+    all_ids = lb.get_photos(friend["id"])
+      lb.post_likes(all_ids)
     puts "Done bombing #{friend["name"]}: #{Time.now}"
   end
 end
