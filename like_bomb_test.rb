@@ -6,7 +6,6 @@ class TestLikeBomb < Test::Unit::TestCase
     @lb = LikeBomb.new(IO.readlines("key.txt").first)
   end
   def test_get_friends
-    assert_equal("Jackie Forman", @lb.get_friends.first["name"])
     assert_equal("12402794", @lb.get_friends.first["id"])
   end
   def test_get_statuses
