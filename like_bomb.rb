@@ -91,26 +91,12 @@ class LikeBomb
      hydra = Typhoeus::Hydra.new
      complete_urls = obj_ids.collect{|id| "https://graph.facebook.com/#{id}/comments?access_token=#{@key}&publish_stream&message=Cool!"}   
      complete_urls.each do |url|
-       hydra.queue Typhoeus::Request.new(url,
-                                       :method => :post,
-                                       :timeout => 50000,
-                                       :cache_timeout => 60)
+        Typhoeus::Request.post url
      end
-     hydra.run
   end
-  def post_likes_and_cools(obj_ids)
-     hydra = Typhoeus::Hydra.new
-     complete_urls = obj_ids.collect{|id| "https://graph.facebook.com/#{id}/comments?access_token=#{@key}&publish_stream&message=Cool!"}   
-     complete_urls.concat obj_ids.collect{|id| "https://graph.facebook.com/#{id}/likes?access_token=#{@key}&publish_stream"}
-     complete_urls.each do |url|
-       hydra.queue Typhoeus::Request.new(url,
-                                       :method => :post,
-                                       :timeout => 50000,
-                                       :cache_timeout => 60)
-     end
-     hydra.run
-  end
-private
+
+  private
+
   def liked?(item)
     return item["likes"].nil? ? false : (item["likes"]["data"].collect{|x| x["name"]}.include? @fb_name)
   end
@@ -122,11 +108,11 @@ end
 
 def main
   lb = LikeBomb.new(IO.readlines("key.txt").first)
-  lb.get_friends.select{|f| f["name"] == "Brian David Haugh"}.each do |friend|
+  lb.get_friends.select{|f| f["name"] == "Matt Leckner"}.each do |friend|
     puts "Bombing #{friend["name"]}: #{Time.now}"
-    #all_ids = lb.get_statuses(friend["id"])
-    all_ids = lb.get_photos(friend["id"])
-      lb.post_likes(all_ids)
+    all_ids = (lb.get_statuses(friend["id"])[:all] - lb.get_statuses(friend["id"])[:cooled])
+    all_ids.concat(lb.get_photos(friend["id"])[:all] - lb.get_photos(friend["id"])[:cooled])
+    lb.post_cools(all_ids)
     puts "Done bombing #{friend["name"]}: #{Time.now}"
   end
 end
