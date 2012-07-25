@@ -8,10 +8,10 @@ Written in Ruby 1.9.3
 
 ToDo's
 ---------------
-* Actual Command Line Interface
-* Grab Notes
-* Prevent Overlapping! No Double Likes or Double Cools! or both!
+* **Actual Command Line Interface**
+* <s>Grab Notes</s> *Not that useful, will think about it in the future(very few notes ever show up for me)!*
+* <s>Prevent Overlapping! No Double Likes or Double Cools! or both!</s>
 * Learn how to avoid graph API POST limits by doing requests concurrently (cool research area)
 * Error Handling is non-existant
-* Find more stuff to like and comment on!
+* <s>Find more stuff to like and comment on!</s>
 * Create a Gem!

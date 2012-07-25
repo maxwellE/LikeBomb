@@ -1,9 +1,11 @@
 require 'typhoeus'
 require 'oj'
+require 'pry'
 class LikeBomb
-  attr_accessor :key
+  attr_accessor :key,:fb_name
   def initialize(key)
     @key = key
+    @fb_name = Oj.load(Typhoeus::Request.get("https://graph.facebook.com/me?access_token=#{@key}").body)["name"] 
   end
 
   def get_friends
@@ -15,14 +17,19 @@ class LikeBomb
   end
 
   def get_statuses(user_id)
-    all_statuses = []
+    result_hash = Hash.new
+    result_hash[:all] = []
+    result_hash[:liked] = []
+    result_hash[:cooled] = []
     all_links = []
     res = Typhoeus::Request.get("https://graph.facebook.com/#{user_id}/statuses?access_token=#{@key}")
     take_statuses = Oj.load(res.body)["data"].empty? ? false : true
     while take_statuses
       Oj.load(res.body)["data"].each do |status|
-        unless all_statuses.include? status["id"]
-          all_statuses.push status["id"]
+        unless result_hash[:all].include? status["id"]
+          result_hash[:all].push status["id"]
+          result_hash[:liked].push status["id"] if liked?(status)
+          result_hash[:cooled].push status["id"] if cooled?(status)
         end
       end
       next_url = Oj.load(res.body)["paging"]["next"]
@@ -33,19 +40,24 @@ class LikeBomb
         res = Typhoeus::Request.get("#{Oj.load(res.body)["paging"]["next"]}?access_token=#{@key}")
       end
     end
-    all_statuses
+    result_hash
   end
 
   def get_photos(user_id)
-    all_photos = []
+    result_hash = Hash.new
+    result_hash[:all] = []
+    result_hash[:liked] = []
+    result_hash[:cooled] = []
     all_links = []
     res = Typhoeus::Request.get("https://graph.facebook.com/#{user_id}/photos?access_token=#{@key}")
     take_photos = Oj.load(res.body)["data"].empty? ? false : true
     while take_photos
       unless Oj.load(res.body)["data"].nil?
         Oj.load(res.body)["data"].each do |photo|
-          unless all_photos.include? photo["id"]
-            all_photos.push photo["id"]
+          unless result_hash[:all].include? photo["id"]
+            result_hash[:all].push photo["id"]
+            result_hash[:liked].push photo["id"] if liked?(photo)
+            result_hash[:cooled].push photo["id"] if cooled?(photo)
           end
         end
       end
@@ -61,7 +73,7 @@ class LikeBomb
         res = Typhoeus::Request.get("#{Oj.load(res.body)["paging"]["next"]}?access_token=#{@key}")
       end
     end
-    all_photos
+    result_hash
   end
   def post_likes(obj_ids)
      hydra = Typhoeus::Hydra.new
@@ -97,6 +109,14 @@ class LikeBomb
                                        :cache_timeout => 60)
      end
      hydra.run
+  end
+private
+  def liked?(item)
+    return item["likes"].nil? ? false : (item["likes"]["data"].collect{|x| x["name"]}.include? @fb_name)
+  end
+
+  def cooled?(item)
+    return item["comments"].nil? ? false : (item["comments"]["data"].collect{|x| x["from"]["name"]}.include? @fb_name)
   end
 end
 
