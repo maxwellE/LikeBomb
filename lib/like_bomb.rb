@@ -1,11 +1,17 @@
+require 'rubygems'
 require 'typhoeus'
 require 'oj'
 require 'pry'
 class LikeBomb
   attr_accessor :key,:fb_name
   def initialize(key)
-    @key = key
-    @fb_name = Oj.load(Typhoeus::Request.get("https://graph.facebook.com/me?access_token=#{@key}").body)["name"] 
+    permissions = Oj.load(Typhoeus::Request.get("https://graph.facebook.com/me/permissions?access_token=#{key}").body)
+    if permissions == Oj.load(File.read("#{File.dirname(__FILE__)}/../valid_permissions.txt"))
+      @key = key
+      @fb_name = Oj.load(Typhoeus::Request.get("https://graph.facebook.com/me?access_token=#{@key}").body)["name"] 
+    else
+      raise ArgumentError , "The provided key is invalid, please consult the README for how to generate a valid API key"
+    end
   end
 
   def get_friends

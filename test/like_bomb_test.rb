@@ -1,9 +1,9 @@
-require_relative 'like_bomb'
+require "#{File.dirname(__FILE__)}/../lib/like_bomb.rb"
 require 'test/unit'
 
 class TestLikeBomb < Test::Unit::TestCase
   def setup
-    @lb = LikeBomb.new(IO.readlines("key.txt").first)
+    @lb = LikeBomb.new(IO.readlines("#{File.dirname(__FILE__)}/../key.txt").first)
   end
   def test_get_friends
     assert_equal("12402794", @lb.get_friends.first["id"])
