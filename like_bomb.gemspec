@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'like_bomb'
-  s.version     = '0.0.0'
+  s.version     = '0.0.1'
   s.date        = '2012-07-25'
   s.summary     = "Lets annoy some Facebook friends"
   s.description = "Likebomb is a quick and efficent way to annoy your Facebook friends by liking or commenting on every status and/or photo 
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "typhoeus", ["= 0.4.2"]
   s.add_runtime_dependency "oj", ["= 1.3.0"]
   s.test_files = Dir.glob('test/like*.rb')
-  s.extra_rdoc_files = ['README']
+  s.extra_rdoc_files = ['README.md']
 end
