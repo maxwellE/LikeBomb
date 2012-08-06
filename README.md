@@ -31,12 +31,11 @@ exact permissions the application may not work!
 
 **My Permissions, gem will work flawlessly with these settings:**
 
-![User Data Permissions](one.png "User Data Permissions")
+![User Data Permissions](http://i47.tinypic.com/fvi448.png "User Data Permissions")
 
-![Friend Data Permissions](two.png "Friend Data Permissions")
+![Friend Data Permissions](http://i45.tinypic.com/2yvmkk5.png "Friend Data Permissions")
 
-![Extended Permissions](three.png "Extended Permissions")
-
+![Extended Permissions](http://i49.tinypic.com/24xi97d.png "Extended Permissions")
 
 **NOTE:  Your access token may expire after a set amount of time which is variable
 by Facebook.**  
@@ -51,21 +50,25 @@ With your valid API key in hand you are ready to do some damage!
 
 **Post Likes on statuses**
 
-    # This will go to your first friend from the Graph API and will like
-    # all of his/her statuses
-    lb = LikeBomb.new("<VALID_KEY>")
-    friend_hash = lb.get_friends 
-    unliked_statuses = lb.get_statuses(friend_hash.first)[:not_liked] # Get not liked statuses
-    lb.post_likes(unliked_statuses)
+```ruby
+# This will go to your first friend from the Graph API and will like
+# all of his/her statuses
+lb = LikeBomb.new("<VALID_KEY>")
+friend_hash = lb.get_friends 
+unliked_statuses = lb.get_statuses(friend_hash.first)[:not_liked] # Get not liked statuses
+lb.post_likes(unliked_statuses)
+```
 
 **Post 'Cool!'s on photos**
 
-    # This will go to your last friend from the Graph API and will comment
-    # 'Cool!'' on all of his/her photos
-    lb = LikeBomb.new("<VALID_KEY>")
-    friend_hash = lb.get_friends 
-    uncooled_photos = lb.get_photos(friend_hash.last)[:not_cooled] 
-    lb.post_cools(uncooled_photos)
+```ruby
+# This will go to your last friend from the Graph API and will comment
+# 'Cool!'' on all of his/her photos
+lb = LikeBomb.new("<VALID_KEY>")
+friend_hash = lb.get_friends 
+uncooled_photos = lb.get_photos(friend_hash.last)[:not_cooled] 
+lb.post_cools(uncooled_photos)
+```
 
 ## License
 
